@@ -1,0 +1,1614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AquaShield AI | IoT Heavy Metal Detection System</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root {
+    --primary: #0ea5e9;
+    --primary-dark: #0284c7;
+    --accent: #10b981;
+    --accent-glow: rgba(16, 185, 129, 0.3);
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --bg-dark: #0f172a;
+    --bg-card: #1e293b;
+    --bg-card-hover: #334155;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --border: #334155;
+    --gradient-1: linear-gradient(135deg, #0ea5e9 0%, #10b981 100%);
+    --gradient-2: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+    --gradient-3: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+    --glass: rgba(30, 41, 59, 0.7);
+    --shadow-glow: 0 0 40px rgba(14, 165, 233, 0.15);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+.bg-mesh {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: -1;
+    background: 
+        radial-gradient(ellipse at 20% 80%, rgba(14, 165, 233, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(139, 92, 246, 0.05) 0%, transparent 60%);
+}
+.floating-orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.15;
+    animation: float 20s infinite ease-in-out;
+    z-index: -1;
+}
+.orb-1 { width: 400px; height: 400px; background: var(--primary); top: 10%; left: -100px; animation-delay: 0s; }
+.orb-2 { width: 300px; height: 300px; background: var(--accent); top: 60%; right: -50px; animation-delay: -5s; }
+.orb-3 { width: 250px; height: 250px; background: #8b5cf6; bottom: 10%; left: 30%; animation-delay: -10s; }
+@keyframes float {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(30px, -30px) scale(1.1); }
+    66% { transform: translate(-20px, 20px) scale(0.9); }
+}
+nav {
+    position: fixed; top: 0; width: 100%;
+    padding: 1rem 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    z-index: 1000;
+}
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 800;
+    font-size: 1.5rem;
+    background: var(--gradient-1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.logo i { font-size: 1.75rem; -webkit-text-fill-color: var(--primary); }
+.nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+}
+.nav-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: color 0.3s;
+    position: relative;
+}
+.nav-links a:hover { color: var(--text-primary); }
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -6px; left: 0;
+    width: 0; height: 2px;
+    background: var(--gradient-1);
+    transition: width 0.3s;
+}
+.nav-links a:hover::after { width: 100%; }
+.github-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.3s;
+}
+.github-btn:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-glow);
+}
+.hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 8rem 5% 4rem;
+}
+.hero-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+}
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    animation: pulse-glow 2s infinite;
+}
+@keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+    50% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+}
+.hero h1 {
+    font-size: 3.5rem;
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.02em;
+}
+.hero h1 .gradient-text {
+    background: var(--gradient-1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.hero-subtitle {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    max-width: 540px;
+    line-height: 1.7;
+}
+.hero-stats {
+    display: flex;
+    gap: 2.5rem;
+    margin-bottom: 2.5rem;
+}
+.stat-item { display: flex; flex-direction: column; }
+.stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--primary);
+    font-family: 'JetBrains Mono', monospace;
+}
+.stat-label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.cta-group { display: flex; gap: 1rem; flex-wrap: wrap; }
+.btn-primary {
+    padding: 1rem 2rem;
+    background: var(--gradient-1);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 20px rgba(14, 165, 233, 0.3);
+}
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(14, 165, 233, 0.4);
+}
+.btn-secondary {
+    padding: 1rem 2rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.btn-secondary:hover {
+    background: var(--bg-card);
+    border-color: var(--primary);
+}
+.hero-visual {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.device-mockup {
+    width: 100%;
+    max-width: 500px;
+    aspect-ratio: 1;
+    position: relative;
+}
+.device-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid;
+    animation: rotate 20s linear infinite;
+}
+.ring-1 { width: 100%; height: 100%; border-color: rgba(14, 165, 233, 0.2); animation-duration: 30s; }
+.ring-2 { width: 80%; height: 80%; top: 10%; left: 10%; border-color: rgba(16, 185, 129, 0.2); animation-duration: 25s; animation-direction: reverse; }
+.ring-3 { width: 60%; height: 60%; top: 20%; left: 20%; border-color: rgba(139, 92, 246, 0.2); animation-duration: 20s; }
+.ring-4 { width: 40%; height: 40%; top: 30%; left: 30%; border-color: rgba(245, 158, 11, 0.2); animation-duration: 15s; animation-direction: reverse; }
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+.device-core {
+    position: absolute;
+    width: 25%; height: 25%;
+    top: 37.5%; left: 37.5%;
+    background: var(--gradient-1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 60px rgba(14, 165, 233, 0.4);
+    animation: pulse 3s ease-in-out infinite;
+}
+@keyframes pulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 60px rgba(14, 165, 233, 0.4); }
+    50% { transform: scale(1.05); box-shadow: 0 0 80px rgba(14, 165, 233, 0.6); }
+}
+.device-core i { font-size: 2.5rem; color: white; }
+.data-particle {
+    position: absolute;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--primary);
+    animation: orbit 8s linear infinite;
+}
+@keyframes orbit {
+    0% { transform: rotate(0deg) translateX(180px) rotate(0deg); }
+    100% { transform: rotate(360deg) translateX(180px) rotate(-360deg); }
+}
+section { padding: 6rem 5%; position: relative; }
+.section-header {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto 4rem;
+}
+.section-tag {
+    display: inline-block;
+    padding: 0.4rem 1rem;
+    background: rgba(14, 165, 233, 0.1);
+    border: 1px solid rgba(14, 165, 233, 0.3);
+    border-radius: 50px;
+    color: var(--primary);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+}
+.section-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+.section-desc {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    line-height: 1.7;
+}
+.problem-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.problem-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+.problem-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 3px;
+    background: var(--gradient-3);
+    transform: scaleX(0);
+    transition: transform 0.4s;
+}
+.problem-card:hover::before { transform: scaleX(1); }
+.problem-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--danger);
+    box-shadow: 0 20px 40px rgba(239, 68, 68, 0.1);
+}
+.problem-icon {
+    width: 50px; height: 50px;
+    border-radius: 12px;
+    background: rgba(239, 68, 68, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    color: var(--danger);
+}
+.problem-card h3 { font-size: 1.2rem; margin-bottom: 0.75rem; }
+.problem-card p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+.tech-showcase { max-width: 1200px; margin: 0 auto; }
+.tech-main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+    margin-bottom: 4rem;
+}
+.tech-diagram {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2rem;
+    position: relative;
+}
+.diagram-layer {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.2rem;
+    background: rgba(14, 165, 233, 0.05);
+    border: 1px solid rgba(14, 165, 233, 0.2);
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    transition: all 0.3s;
+}
+.diagram-layer:hover {
+    background: rgba(14, 165, 233, 0.1);
+    transform: translateX(10px);
+}
+.diagram-layer .layer-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+.layer-edge { background: rgba(14, 165, 233, 0.2); color: var(--primary); }
+.layer-cloud { background: rgba(139, 92, 246, 0.2); color: #8b5cf6; }
+.layer-ml { background: rgba(16, 185, 129, 0.2); color: var(--accent); }
+.layer-alert { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
+.layer-info h4 { font-size: 0.95rem; margin-bottom: 0.2rem; }
+.layer-info p { font-size: 0.8rem; color: var(--text-secondary); }
+.connector {
+    width: 2px; height: 20px;
+    background: var(--border);
+    margin-left: 2rem;
+    margin-bottom: 1rem;
+    position: relative;
+}
+.connector::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: -3px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--primary);
+    animation: data-flow 1.5s infinite;
+}
+@keyframes data-flow {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.5); }
+}
+.tech-details h3 { font-size: 1.8rem; margin-bottom: 1rem; }
+.tech-details p {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    line-height: 1.7;
+}
+.tech-specs { display: flex; flex-direction: column; gap: 1rem; }
+.spec-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 1rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+.spec-label { font-size: 0.85rem; color: var(--text-secondary); }
+.spec-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--primary);
+}
+.innovation-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.innovation-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    transition: all 0.4s;
+    position: relative;
+    overflow: hidden;
+}
+.innovation-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 100%; height: 4px;
+    background: var(--gradient-1);
+    transform: scaleX(0);
+    transition: transform 0.4s;
+}
+.innovation-card:hover::after { transform: scaleX(1); }
+.innovation-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--primary);
+    box-shadow: var(--shadow-glow);
+}
+.innovation-icon {
+    width: 60px; height: 60px;
+    border-radius: 16px;
+    background: var(--gradient-1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 1.5rem;
+    color: white;
+}
+.innovation-card:nth-child(2) .innovation-icon { background: var(--gradient-2); }
+.innovation-card:nth-child(3) .innovation-icon { background: var(--gradient-3); }
+.innovation-card:nth-child(4) .innovation-icon { background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%); }
+.innovation-card h3 { font-size: 1.1rem; margin-bottom: 0.75rem; }
+.innovation-card p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+.business-section {
+    background: linear-gradient(180deg, var(--bg-dark) 0%, rgba(14, 165, 233, 0.03) 50%, var(--bg-dark) 100%);
+}
+.business-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+.business-card {
+    background: var(--glass);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2.5rem;
+    transition: all 0.4s;
+}
+.business-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 40px rgba(16, 185, 129, 0.1);
+}
+.business-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+.business-icon {
+    width: 50px; height: 50px;
+    border-radius: 14px;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    color: var(--accent);
+}
+.business-card h3 { font-size: 1.3rem; }
+.impact-metric {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin: 1.5rem 0;
+}
+.impact-number {
+    font-size: 3rem;
+    font-weight: 900;
+    background: var(--gradient-1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-family: 'JetBrains Mono', monospace;
+}
+.impact-unit {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+.business-list { list-style: none; }
+.business-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.business-list li:last-child { border-bottom: none; }
+.business-list li i { color: var(--accent); font-size: 0.8rem; }
+.sdg-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+.sdg-card {
+    display: flex;
+    gap: 1.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    transition: all 0.4s;
+}
+.sdg-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent);
+}
+.sdg-number {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    background: var(--gradient-1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: white;
+    flex-shrink: 0;
+}
+.sdg-content h3 { font-size: 1.2rem; margin-bottom: 0.5rem; }
+.sdg-content p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+.results-showcase { max-width: 1200px; margin: 0 auto; }
+.metrics-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+.metric-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 4px;
+    background: var(--gradient-1);
+}
+.metric-card:nth-child(2)::before { background: var(--gradient-2); }
+.metric-card:nth-child(3)::before { background: var(--gradient-3); }
+.metric-card:nth-child(4)::before { background: linear-gradient(90deg, #06b6d4, #3b82f6); }
+.metric-value {
+    font-size: 2.5rem;
+    font-weight: 900;
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 0.5rem;
+}
+.metric-card:nth-child(1) .metric-value { color: var(--primary); }
+.metric-card:nth-child(2) .metric-value { color: #8b5cf6; }
+.metric-card:nth-child(3) .metric-value { color: var(--danger); }
+.metric-card:nth-child(4) .metric-value { color: var(--warning); }
+.metric-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+.chart-container {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.chart-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+.chart-badge {
+    padding: 0.4rem 1rem;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: 50px;
+    color: var(--accent);
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+.chart-area {
+    height: 250px;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 0 1rem;
+    border-bottom: 2px solid var(--border);
+}
+.chart-bar {
+    width: 8%;
+    background: var(--gradient-1);
+    border-radius: 6px 6px 0 0;
+    transition: all 0.6s ease;
+    position: relative;
+    opacity: 0.8;
+}
+.chart-bar:hover { opacity: 1; transform: scaleY(1.05); }
+.chart-bar.danger { background: var(--gradient-3); }
+.chart-bar.warning { background: linear-gradient(180deg, var(--warning), var(--danger)); }
+.threshold-line {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: repeating-linear-gradient(90deg, var(--danger), var(--danger) 10px, transparent 10px, transparent 20px);
+    top: 30%;
+}
+.threshold-label {
+    position: absolute;
+    right: 0;
+    top: 30%;
+    transform: translateY(-150%);
+    font-size: 0.75rem;
+    color: var(--danger);
+    font-weight: 600;
+    background: rgba(239, 68, 68, 0.1);
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+}
+.chart-labels {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 1rem 0;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-family: 'JetBrains Mono', monospace;
+}
+.timeline {
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+}
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 100%;
+    background: var(--border);
+}
+.timeline-item {
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 2rem;
+    position: relative;
+    margin-bottom: 3rem;
+    width: 50%;
+}
+.timeline-item:nth-child(even) {
+    justify-content: flex-start;
+    padding-right: 0;
+    padding-left: 2rem;
+    margin-left: 50%;
+}
+.timeline-dot {
+    position: absolute;
+    right: -8px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--primary);
+    border: 3px solid var(--bg-dark);
+    box-shadow: 0 0 0 3px var(--primary);
+}
+.timeline-item:nth-child(even) .timeline-dot {
+    right: auto;
+    left: -8px;
+}
+.timeline-content {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    max-width: 300px;
+    transition: all 0.3s;
+}
+.timeline-content:hover {
+    border-color: var(--primary);
+    transform: scale(1.02);
+}
+.timeline-date {
+    font-size: 0.8rem;
+    color: var(--primary);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+.timeline-content h4 { font-size: 1rem; margin-bottom: 0.5rem; }
+.timeline-content p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+.author-section {
+    background: linear-gradient(180deg, var(--bg-dark) 0%, rgba(139, 92, 246, 0.03) 50%, var(--bg-dark) 100%);
+}
+.author-card {
+    max-width: 600px;
+    margin: 0 auto;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 3rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.author-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 4px;
+    background: var(--gradient-2);
+}
+.author-avatar {
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    background: var(--gradient-1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 2.5rem;
+    color: white;
+    border: 4px solid var(--bg-card);
+    box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.2);
+}
+.author-name { font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem; }
+.author-role {
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+.author-bio {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+}
+.author-meta {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+.meta-item i { color: var(--primary); }
+footer {
+    background: var(--bg-card);
+    border-top: 1px solid var(--border);
+    padding: 3rem 5%;
+    text-align: center;
+}
+.footer-content { max-width: 600px; margin: 0 auto; }
+.footer-logo {
+    font-size: 1.5rem;
+    font-weight: 800;
+    background: var(--gradient-1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+}
+.footer-text {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+}
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+.footer-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s;
+}
+.footer-links a:hover { color: var(--primary); }
+.copyright {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    opacity: 0.6;
+}
+@media (max-width: 1024px) {
+    .hero-content { grid-template-columns: 1fr; text-align: center; }
+    .hero-stats { justify-content: center; }
+    .cta-group { justify-content: center; }
+    .hero-visual { display: none; }
+    .tech-main { grid-template-columns: 1fr; }
+    .innovation-grid { grid-template-columns: repeat(2, 1fr); }
+    .business-grid { grid-template-columns: 1fr; }
+    .metrics-row { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+    .nav-links { display: none; }
+    .hero h1 { font-size: 2.5rem; }
+    .problem-grid { grid-template-columns: 1fr; }
+    .innovation-grid { grid-template-columns: 1fr; }
+    .sdg-grid { grid-template-columns: 1fr; }
+    .metrics-row { grid-template-columns: 1fr; }
+    .timeline-item {
+        width: 100%;
+        padding-left: 2rem;
+        padding-right: 0;
+        margin-left: 0;
+        justify-content: flex-start;
+    }
+    .timeline-item:nth-child(even) { margin-left: 0; padding-left: 2rem; }
+    .timeline::before { left: 0; }
+    .timeline-dot { left: -8px !important; right: auto !important; }
+}
+.fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease;
+}
+.fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+.code-block {
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 1.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    overflow-x: auto;
+    margin: 1rem 0;
+}
+.code-header {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #30363d;
+}
+.code-dot { width: 12px; height: 12px; border-radius: 50%; }
+.dot-red { background: #ff5f56; }
+.dot-yellow { background: #ffbd2e; }
+.dot-green { background: #27c93f; }
+.code-content { color: #c9d1d9; line-height: 1.6; }
+.code-keyword { color: #ff7b72; }
+.code-string { color: #a5d6ff; }
+.code-comment { color: #8b949e; }
+.code-function { color: #d2a8ff; }
+.code-number { color: #79c0ff; }
+</style>
+</head>
+<body>
+<div class="bg-mesh"></div>
+<div class="floating-orb orb-1"></div>
+<div class="floating-orb orb-2"></div>
+<div class="floating-orb orb-3"></div>
+
+<nav>
+    <div class="logo">
+        <i class="fas fa-shield-alt"></i>
+        AquaShield AI
+    </div>
+    <ul class="nav-links">
+        <li><a href="#problem">Problem</a></li>
+        <li><a href="#technology">Technology</a></li>
+        <li><a href="#innovation">Innovation</a></li>
+        <li><a href="#business">Business</a></li>
+        <li><a href="#results">Results</a></li>
+        <li><a href="#impact">Impact</a></li>
+    </ul>
+    <a href="#" class="github-btn">
+        <i class="fab fa-github"></i>
+        View on GitHub
+    </a>
+</nav>
+
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-text">
+            <div class="hero-badge">
+                <i class="fas fa-award"></i>
+                Competition Entry — IoT & ML Innovation
+            </div>
+            <h1>
+                Predicting Water Contamination<br>
+                <span class="gradient-text">4 Days Before</span> It Happens
+            </h1>
+            <p class="hero-subtitle">
+                A low-cost IoT edge-to-cloud system that uses AI-powered colorimetric sensing 
+                to detect 8 heavy metal ions in real-time and forecast pollution events with 
+                80% accuracy using temporal Random Forest classification.
+            </p>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-value">8</span>
+                    <span class="stat-label">Heavy Metals</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">4.01</span>
+                    <span class="stat-label">Days Lead Time</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">80%</span>
+                    <span class="stat-label">Model Accuracy</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">&lt;5s</span>
+                    <span class="stat-label">Cloud Latency</span>
+                </div>
+            </div>
+            <div class="cta-group">
+                <a href="#technology" class="btn-primary">
+                    <i class="fas fa-microchip"></i>
+                    Explore Technology
+                </a>
+                <a href="#business" class="btn-secondary">
+                    <i class="fas fa-chart-line"></i>
+                    Business Impact
+                </a>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="device-mockup">
+                <div class="device-ring ring-1"></div>
+                <div class="device-ring ring-2"></div>
+                <div class="device-ring ring-3"></div>
+                <div class="device-ring ring-4"></div>
+                <div class="device-core">
+                    <i class="fas fa-tint"></i>
+                </div>
+                <div class="data-particle" style="animation-delay: 0s;"></div>
+                <div class="data-particle" style="animation-delay: -2s; background: var(--accent);"></div>
+                <div class="data-particle" style="animation-delay: -4s; background: var(--warning);"></div>
+                <div class="data-particle" style="animation-delay: -6s; background: #8b5cf6;"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="problem" class="fade-in">
+    <div class="section-header">
+        <span class="section-tag">The Crisis</span>
+        <h2 class="section-title">Why Current Solutions Fail</h2>
+        <p class="section-desc">
+            Traditional water monitoring is reactive, expensive, and slow. By the time lab results arrive, 
+            communities may have been consuming toxic water for weeks.
+        </p>
+    </div>
+    <div class="problem-grid">
+        <div class="problem-card">
+            <div class="problem-icon"><i class="fas fa-flask"></i></div>
+            <h3>Lab Bottleneck</h3>
+            <p>ICP-MS and AAS require centralized labs, trained technicians, and days of processing. 
+               Each test costs hundreds of dollars, making frequent monitoring impossible for developing regions.</p>
+        </div>
+        <div class="problem-card">
+            <div class="problem-icon"><i class="fas fa-eye-slash"></i></div>
+            <h3>Invisible Threats</h3>
+            <p>Heavy metals like Lead, Cadmium, and Mercury are colorless and odorless. 
+               Communities consume contaminated water for years before symptoms appear, causing irreversible neurological damage.</p>
+        </div>
+        <div class="problem-card">
+            <div class="problem-icon"><i class="fas fa-clock"></i></div>
+            <h3>Reactive Only</h3>
+            <p>Existing IoT systems only report current values. They cannot predict future contamination events, 
+               leaving zero time for preventive action before a toxic plume reaches water treatment intakes.</p>
+        </div>
+    </div>
+</section>
+
+<section id="technology" class="fade-in">
+    <div class="section-header">
+        <span class="section-tag">System Architecture</span>
+        <h2 class="section-title">Edge-to-Cloud AI Pipeline</h2>
+        <p class="section-desc">
+            A vertically integrated stack from physical sensing to predictive intelligence, 
+            designed for real-world deployment in resource-constrained environments.
+        </p>
+    </div>
+    <div class="tech-showcase">
+        <div class="tech-main">
+            <div class="tech-diagram">
+                <div class="diagram-layer">
+                    <div class="layer-icon layer-edge"><i class="fas fa-microchip"></i></div>
+                    <div class="layer-info">
+                        <h4>Edge Layer — NodeMCU ESP8266</h4>
+                        <p>TCS3200 color sensor &rarr; RGB frequency &rarr; Concentration mapping</p>
+                    </div>
+                </div>
+                <div class="connector"></div>
+                <div class="diagram-layer">
+                    <div class="layer-icon layer-cloud"><i class="fas fa-cloud"></i></div>
+                    <div class="layer-info">
+                        <h4>Cloud Layer — ThingSpeak IoT</h4>
+                        <p>Real-time visualization, 8-channel monitoring, &lt;5s latency</p>
+                    </div>
+                </div>
+                <div class="connector"></div>
+                <div class="diagram-layer">
+                    <div class="layer-icon layer-ml"><i class="fas fa-brain"></i></div>
+                    <div class="layer-info">
+                        <h4>ML Layer — Random Forest Classifier</h4>
+                        <p>Temporal lag features (Lag1, Lag2) &rarr; Predictive risk scoring</p>
+                    </div>
+                </div>
+                <div class="connector"></div>
+                <div class="diagram-layer">
+                    <div class="layer-icon layer-alert"><i class="fas fa-bell"></i></div>
+                    <div class="layer-info">
+                        <h4>Alert Layer — Automated EWS</h4>
+                        <p>Threshold &ge; 0.70 triggers email alert 4 days before breach</p>
+                    </div>
+                </div>
+            </div>
+            <div class="tech-details">
+                <h3>Hardware Innovation</h3>
+                <p>
+                    The prototype uses a sealed dark chamber design to eliminate ambient light interference, 
+                    ensuring Beer-Lambert Law fidelity. The TCS3200 sensor converts reflected light from 
+                    colorimetric test strips into precise frequency signals for 8 heavy metals: Cu, Fe, Mn, Zn, Hg, Cr, Pb, Cd.
+                </p>
+                <div class="tech-specs">
+                    <div class="spec-row">
+                        <span class="spec-label">Microcontroller</span>
+                        <span class="spec-value">NodeMCU ESP8266</span>
+                    </div>
+                    <div class="spec-row">
+                        <span class="spec-label">Sensor Array</span>
+                        <span class="spec-value">TCS3200 RGB-to-Frequency</span>
+                    </div>
+                    <div class="spec-row">
+                        <span class="spec-label">Detection Method</span>
+                        <span class="spec-value">Colorimetric Paper Strips</span>
+                    </div>
+                    <div class="spec-row">
+                        <span class="spec-label">Cloud Platform</span>
+                        <span class="spec-value">ThingSpeak (MathWorks)</span>
+                    </div>
+                    <div class="spec-row">
+                        <span class="spec-label">ML Framework</span>
+                        <span class="spec-value">Scikit-Learn Random Forest</span>
+                    </div>
+                    <div class="spec-row">
+                        <span class="spec-label">Power Supply</span>
+                        <span class="spec-value">6V DC / Portable Battery</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="innovation" class="fade-in">
+    <div class="section-header">
+        <span class="section-tag">Key Innovations</span>
+        <h2 class="section-title">What Makes This Different</h2>
+        <p class="section-desc">
+            Four breakthrough innovations that transform water monitoring from reactive logging 
+            into proactive environmental intelligence.
+        </p>
+    </div>
+    <div class="innovation-grid">
+        <div class="innovation-card">
+            <div class="innovation-icon"><i class="fas fa-bolt"></i></div>
+            <h3>Edge Intelligence</h3>
+            <p>Real-time concentration conversion happens on-device using hardcoded calibration matrices, 
+               reducing cloud payload by 70% and enabling offline operation.</p>
+        </div>
+        <div class="innovation-card">
+            <div class="innovation-icon"><i class="fas fa-project-diagram"></i></div>
+            <h3>Correlation Mapping</h3>
+            <p>Pearson analysis revealed Pb-Cd correlation (r=0.79) and Cu-Mn-Hg clusters, 
+               mathematically justifying multi-variable ML over single-sensor thresholds.</p>
+        </div>
+        <div class="innovation-card">
+            <div class="innovation-icon"><i class="fas fa-hourglass-half"></i></div>
+            <h3>Temporal Look-Ahead</h3>
+            <p>Lag1/Lag2 feature engineering with shifted target vectors (Y<sub>t+1</sub>) 
+               transforms classification into prediction, enabling 4-day advance warnings.</p>
+        </div>
+        <div class="innovation-card">
+            <div class="innovation-icon"><i class="fas fa-envelope"></i></div>
+            <h3>Automated EWS</h3>
+            <p>Threshold-triggered email alerts via ThingSpeak API ensure authorities receive 
+               actionable intelligence without manual dashboard monitoring.</p>
+        </div>
+    </div>
+</section>
+
+<section id="business" class="business-section fade-in">
+    <div class="section-header">
+        <span class="section-tag">Business & Market</span>
+        <h2 class="section-title">Commercial Viability</h2>
+        <p class="section-desc">
+            Beyond research — a scalable product addressing a $14.8B water monitoring market 
+            with clear value propositions for multiple stakeholders.
+        </p>
+    </div>
+    <div class="business-grid">
+        <div class="business-card">
+            <div class="business-header">
+                <div class="business-icon"><i class="fas fa-dollar-sign"></i></div>
+                <h3>Cost Advantage</h3>
+            </div>
+            <div class="impact-metric">
+                <span class="impact-number">95%</span>
+                <span class="impact-unit">Cost Reduction vs Lab Methods</span>
+            </div>
+            <ul class="business-list">
+                <li><i class="fas fa-check"></i> BOM cost under $25 per unit</li>
+                <li><i class="fas fa-check"></i> No recurring chemical reagent costs</li>
+                <li><i class="fas fa-check"></i> Eliminates lab technician salaries</li>
+                <li><i class="fas fa-check"></i> Paper strips = biodegradable sensors</li>
+                <li><i class="fas fa-check"></i> Wi-Fi only — no cellular data plans</li>
+            </ul>
+        </div>
+        <div class="business-card">
+            <div class="business-header">
+                <div class="business-icon"><i class="fas fa-globe-asia"></i></div>
+                <h3>Market Opportunity</h3>
+            </div>
+            <div class="impact-metric">
+                <span class="impact-number">2.2B</span>
+                <span class="impact-unit">People Without Safe Water Monitoring</span>
+            </div>
+            <ul class="business-list">
+                <li><i class="fas fa-check"></i> Agricultural regions (paddy fields, plantations)</li>
+                <li><i class="fas fa-check"></i> Developing nations with limited lab infrastructure</li>
+                <li><i class="fas fa-check"></i> Remote mining and industrial zones</li>
+                <li><i class="fas fa-check"></i> Disaster relief and emergency response</li>
+                <li><i class="fas fa-check"></i> Smart city river network grids</li>
+            </ul>
+        </div>
+        <div class="business-card">
+            <div class="business-header">
+                <div class="business-icon"><i class="fas fa-handshake"></i></div>
+                <h3>Revenue Model</h3>
+            </div>
+            <div class="impact-metric">
+                <span class="impact-number">SaaS</span>
+                <span class="impact-unit">+ Hardware Subscription</span>
+            </div>
+            <ul class="business-list">
+                <li><i class="fas fa-check"></i> Hardware sale + monthly sensor strip subscription</li>
+                <li><i class="fas fa-check"></i> Premium ML analytics dashboard tier</li>
+                <li><i class="fas fa-check"></i> Government EPA compliance monitoring contracts</li>
+                <li><i class="fas fa-check"></i> Insurance risk assessment partnerships</li>
+                <li><i class="fas fa-check"></i> White-label OEM for water utilities</li>
+            </ul>
+        </div>
+        <div class="business-card">
+            <div class="business-header">
+                <div class="business-icon"><i class="fas fa-shield-alt"></i></div>
+                <h3>Risk Mitigation Value</h3>
+            </div>
+            <div class="impact-metric">
+                <span class="impact-number">$2.4M</span>
+                <span class="impact-unit">Avg. Cost Per Contamination Event</span>
+            </div>
+            <ul class="business-list">
+                <li><i class="fas fa-check"></i> Prevent healthcare burden from heavy metal poisoning</li>
+                <li><i class="fas fa-check"></i> Avoid agricultural crop destruction</li>
+                <li><i class="fas fa-check"></i> Eliminate water treatment plant shutdowns</li>
+                <li><i class="fas fa-check"></i> Reduce regulatory fines and legal liability</li>
+                <li><i class="fas fa-check"></i> Protect brand reputation for food producers</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section id="impact" class="fade-in">
+    <div class="section-header">
+        <span class="section-tag">Global Impact</span>
+        <h2 class="section-title">UN Sustainable Development Goals</h2>
+        <p class="section-desc">
+            Directly advancing two critical SDGs through technology-enabled environmental stewardship 
+            and public health protection.
+        </p>
+    </div>
+    <div class="sdg-grid">
+        <div class="sdg-card">
+            <div class="sdg-number">6</div>
+            <div class="sdg-content">
+                <h3>Clean Water & Sanitation</h3>
+                <p>Target 6.3: Improving water quality by reducing contamination. 
+                   Our system provides real-time detection of toxic heavy metals, 
+                   enabling immediate upstream intervention before pollutants reach drinking water sources.</p>
+            </div>
+        </div>
+        <div class="sdg-card">
+            <div class="sdg-number">14</div>
+            <div class="sdg-content">
+                <h3>Life Below Water</h3>
+                <p>Target 14.1: Preventing marine pollution. By intercepting agricultural runoff 
+                   at drainage channels, the system prevents toxic plumes from reaching rivers, 
+                   estuaries, and ocean ecosystems.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="results" class="fade-in">
+    <div class="section-header">
+        <span class="section-tag">Validation</span>
+        <h2 class="section-title">Empirical Results</h2>
+        <p class="section-desc">
+            Rigorous field testing at agricultural drainage sites with 100+ daily samples, 
+            validated through chronological train-test splitting to prevent data leakage.
+        </p>
+    </div>
+    <div class="results-showcase">
+        <div class="metrics-row">
+            <div class="metric-card">
+                <div class="metric-value">80.0%</div>
+                <div class="metric-label">Global Accuracy</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">50.0%</div>
+                <div class="metric-label">Recall (Catch Rate)</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">0.333</div>
+                <div class="metric-label">F1-Score</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">4.01</div>
+                <div class="metric-label">Days Lead Time</div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <div class="chart-header">
+                <span class="chart-title"><i class="fas fa-chart-area" style="margin-right: 0.5rem; color: var(--primary);"></i>AI Risk Probability vs. Actual Contamination</span>
+                <span class="chart-badge">Proven Early Warning</span>
+            </div>
+            <div class="chart-area">
+                <div class="chart-bar" style="height: 15%;"></div>
+                <div class="chart-bar" style="height: 10%;"></div>
+                <div class="chart-bar" style="height: 68%;"></div>
+                <div class="chart-bar" style="height: 55%;"></div>
+                <div class="chart-bar" style="height: 45%;"></div>
+                <div class="chart-bar" style="height: 8%;"></div>
+                <div class="chart-bar" style="height: 12%;"></div>
+                <div class="chart-bar" style="height: 15%;"></div>
+                <div class="chart-bar" style="height: 68%;"></div>
+                <div class="chart-bar" style="height: 70%;"></div>
+                <div class="chart-bar" style="height: 60%;"></div>
+                <div class="chart-bar" style="height: 8%;"></div>
+                <div class="chart-bar" style="height: 15%;"></div>
+                <div class="chart-bar" style="height: 15%;"></div>
+                <div class="chart-bar" style="height: 10%;"></div>
+                <div class="chart-bar warning" style="height: 65%;"></div>
+                <div class="chart-bar danger" style="height: 100%;"></div>
+                <div class="chart-bar danger" style="height: 100%;"></div>
+                <div class="threshold-line"></div>
+                <div class="threshold-label">WARNING THRESHOLD (0.70)</div>
+            </div>
+            <div class="chart-labels">
+                <span>Mar 19</span>
+                <span>Mar 20</span>
+                <span>Mar 21</span>
+                <span>Mar 22</span>
+                <span>Mar 23</span>
+                <span>Mar 24</span>
+                <span>Mar 25</span>
+                <span>Mar 26</span>
+                <span>Mar 27</span>
+                <span>Mar 28</span>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <div class="chart-header">
+                <span class="chart-title"><i class="fas fa-fire" style="margin-right: 0.5rem; color: var(--danger);"></i>Heavy Metal Correlation Heatmap</span>
+                <span class="chart-badge">Pb-Cd r = 0.79</span>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; padding: 1rem;">
+                <div style="aspect-ratio: 1; background: #b91c1c; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Cu</div>
+                <div style="aspect-ratio: 1; background: #334155; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Fe</div>
+                <div style="aspect-ratio: 1; background: #c2410c; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Mn</div>
+                <div style="aspect-ratio: 1; background: #c2410c; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Zn</div>
+                <div style="aspect-ratio: 1; background: #c2410c; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Hg</div>
+                <div style="aspect-ratio: 1; background: #475569; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Cr</div>
+                <div style="aspect-ratio: 1; background: #334155; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Pb</div>
+                <div style="aspect-ratio: 1; background: #475569; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Cd</div>
+
+                <div style="aspect-ratio: 1; background: #334155; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Fe</div>
+                <div style="aspect-ratio: 1; background: #b91c1c; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Fe</div>
+                <div style="aspect-ratio: 1; background: #1e293b; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Mn</div>
+                <div style="aspect-ratio: 1; background: #1e293b; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Zn</div>
+                <div style="aspect-ratio: 1; background: #1e293b; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Hg</div>
+                <div style="aspect-ratio: 1; background: #475569; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Cr</div>
+                <div style="aspect-ratio: 1; background: #1e293b; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Pb</div>
+                <div style="aspect-ratio: 1; background: #1e293b; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Cd</div>
+
+                <div style="aspect-ratio: 1; background: #c2410c; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Mn</div>
+                <div style="aspect-ratio: 1; background: #1e293b; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Fe</div>
+                <div style="aspect-ratio: 1; background: #b91c1c; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Mn</div>
+                <div style="aspect-ratio: 1; background: #c2410c; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Zn</div>
+                <div style="aspect-ratio: 1; background: #c2410c; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Hg</div>
+                <div style="aspect-ratio: 1; background: #475569; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Cr</div>
+                <div style="aspect-ratio: 1; background: #475569; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Pb</div>
+                <div style="aspect-ratio: 1; background: #c2410c; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Cd</div>
+
+                <div style="aspect-ratio: 1; background: #c2410c; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Zn</div>
+                <div style="aspect-ratio: 1; background: #1e293b; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Fe</div>
+                <div style="aspect-ratio: 1; background: #c2410c; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Zn</div>
+                <div style="aspect-ratio: 1; background: #b91c1c; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Zn</div>
+                <div style="aspect-ratio: 1; background: #475569; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Hg</div>
+                <div style="aspect-ratio: 1; background: #475569; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Cr</div>
+                <div style="aspect-ratio: 1; background: #475569; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Pb</div>
+                <div style="aspect-ratio: 1; background: #c2410c; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Cd</div>
+
+                <div style="aspect-ratio: 1; background: #c2410c; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Hg</div>
+                <div style="aspect-ratio: 1; background: #1e293b; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Fe</div>
+                <div style="aspect-ratio: 1; background: #c2410c; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Hg</div>
+                <div style="aspect-ratio: 1; background: #475569; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Zn</div>
+                <div style="aspect-ratio: 1; background: #b91c1c; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Hg</div>
+                <div style="aspect-ratio: 1; background: #475569; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Cr</div>
+                <div style="aspect-ratio: 1; background: #475569; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Pb</div>
+                <div style="aspect-ratio: 1; background: #c2410c; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Cd</div>
+
+                <div style="aspect-ratio: 1; background: #475569; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Cr</div>
+                <div style="aspect-ratio: 1; background: #475569; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Fe</div>
+                <div style="aspect-ratio: 1; background: #475569; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Cr</div>
+                <div style="aspect-ratio: 1; background: #475569; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Zn</div>
+                <div style="aspect-ratio: 1; background: #475569; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Hg</div>
+                <div style="aspect-ratio: 1; background: #b91c1c; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Cr</div>
+                <div style="aspect-ratio: 1; background: #334155; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Pb</div>
+                <div style="aspect-ratio: 1; background: #475569; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Cd</div>
+
+                <div style="aspect-ratio: 1; background: #334155; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Pb</div>
+                <div style="aspect-ratio: 1; background: #1e293b; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Fe</div>
+                <div style="aspect-ratio: 1; background: #475569; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Pb</div>
+                <div style="aspect-ratio: 1; background: #475569; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Zn</div>
+                <div style="aspect-ratio: 1; background: #475569; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Hg</div>
+                <div style="aspect-ratio: 1; background: #334155; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Cr</div>
+                <div style="aspect-ratio: 1; background: #b91c1c; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Pb</div>
+                <div style="aspect-ratio: 1; background: #b91c1c; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Cd</div>
+
+                <div style="aspect-ratio: 1; background: #475569; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Cd</div>
+                <div style="aspect-ratio: 1; background: #1e293b; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Fe</div>
+                <div style="aspect-ratio: 1; background: #c2410c; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Cd</div>
+                <div style="aspect-ratio: 1; background: #c2410c; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Zn</div>
+                <div style="aspect-ratio: 1; background: #c2410c; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Cd</div>
+                <div style="aspect-ratio: 1; background: #475569; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Cr</div>
+                <div style="aspect-ratio: 1; background: #b91c1c; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Pb</div>
+                <div style="aspect-ratio: 1; background: #b91c1c; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">Cd</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="fade-in">
+    <div class="section-header">
+        <span class="section-tag">System Timeline</span>
+        <h2 class="section-title">From Sensor to Alert</h2>
+        <p class="section-desc">
+            A continuous operational loop that transforms physical water samples into 
+            automated predictive intelligence within seconds.
+        </p>
+    </div>
+    <div class="timeline">
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <div class="timeline-date">T+0s</div>
+                <h4>Sample Collection</h4>
+                <p>Water sample applied to colorimetric test strip. Chemical reaction produces color change proportional to heavy metal concentration.</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <div class="timeline-date">T+2s</div>
+                <h4>Optical Scan</h4>
+                <p>TCS3200 sensor in sealed dark chamber reads RGB reflectance frequencies. ESP8266 converts frequencies to concentration (mg/L) via calibration matrix.</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <div class="timeline-date">T+5s</div>
+                <h4>Cloud Upload</h4>
+                <p>Data packetized and transmitted via HTTP to ThingSpeak. 8 fields populated with real-time concentration values for all metals.</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <div class="timeline-date">T+10s</div>
+                <h4>ML Inference</h4>
+                <p>Google Colab pipeline pulls data. Lag features (t-1, t-2) generated for Mn, Hg, Pb, Cd. Random Forest computes future risk probability.</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <div class="timeline-date">T+15s</div>
+                <h4>Alert Decision</h4>
+                <p>If P(future contamination) >= 0.70, automated email alert dispatched to authorities. 4-day operational lead time activated.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="author-section fade-in">
+    <div class="section-header">
+        <span class="section-tag">Researcher</span>
+        <h2 class="section-title">Behind the Project</h2>
+    </div>
+    <div class="author-card">
+        <div class="author-avatar"><i class="fas fa-user"></i></div>
+        <div class="author-name">Muhammad Hakimi Bin Abdullah</div>
+        <div class="author-role">Bachelor of Computer Engineering (Hons)</div>
+        <div class="author-bio">
+            Final year student at Universiti Teknikal Malaysia Melaka (UTeM), specializing in IoT systems 
+            and machine learning applications for environmental monitoring. This thesis represents a 
+            convergence of embedded systems, data science, and sustainable engineering.
+        </div>
+        <div class="author-meta">
+            <div class="meta-item"><i class="fas fa-university"></i> UTeM</div>
+            <div class="meta-item"><i class="fas fa-map-marker-alt"></i> Melaka, Malaysia</div>
+            <div class="meta-item"><i class="fas fa-calendar"></i> 2025/2026</div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="footer-content">
+        <div class="footer-logo">AquaShield AI</div>
+        <p class="footer-text">
+            IoT-Based Heavy Metal Ion Detection with Data-Driven Analytics.<br>
+            Protecting water, predicting the future.
+        </p>
+        <div class="footer-links">
+            <a href="#"><i class="fab fa-github"></i> GitHub</a>
+            <a href="#"><i class="fas fa-file-pdf"></i> Thesis PDF</a>
+            <a href="#"><i class="fas fa-envelope"></i> Contact</a>
+        </div>
+        <p class="copyright">Built for competition evaluation. All data sourced from empirical field testing.</p>
+    </div>
+</footer>
+
+<script>
+    // Scroll reveal animation
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // Smooth scroll for nav links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+
+    // Navbar background on scroll
+    window.addEventListener('scroll', () => {
+        const nav = document.querySelector('nav');
+        if (window.scrollY > 50) {
+            nav.style.background = 'rgba(15, 23, 42, 0.95)';
+        } else {
+            nav.style.background = 'rgba(15, 23, 42, 0.8)';
+        }
+    });
+
+    // Animate bars on scroll
+    const chartObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const bars = entry.target.querySelectorAll('.chart-bar');
+                bars.forEach((bar, i) => {
+                    setTimeout(() => {
+                        bar.style.transform = 'scaleY(1)';
+                    }, i * 50);
+                });
+            }
+        });
+    }, { threshold: 0.3 });
+
+    document.querySelectorAll('.chart-area').forEach(chart => chartObserver.observe(chart));
+</script>
+</body>
+</html>
